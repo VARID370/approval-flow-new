@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Upload and manage your documents in ApprovalFlow.">
+  <title>Upload Documents — ApprovalFlow</title>
+  <link rel="stylesheet" href="/css/styles.css">
+</head>
+<body>
+  <div class="app-layout">
+    <aside class="sidebar" id="sidebar"></aside>
+    <div class="sidebar-overlay" onclick="App.closeSidebar()"></div>
+
+    <div class="main-content">
+      <header class="navbar">
+        <div class="navbar-left">
+          <button class="menu-toggle" onclick="App.toggleSidebar()">☰</button>
+          <h2 class="page-title">Documents</h2>
+        </div>
+        <div class="navbar-right">
+          <button class="navbar-btn" id="theme-toggle" onclick="App.toggleTheme()">🌙</button>
+          <button class="navbar-btn" onclick="NotificationPanel.toggle()">🔔<span class="notification-badge hidden" id="notification-badge">0</span></button>
+        </div>
+      </header>
+
+      <div class="page-content">
+        <div class="page-header-actions">
+          <div>
+            <h1>My Documents</h1>
+            <p>Upload, manage, and track your document submissions</p>
+          </div>
+          <button class="btn btn-primary" onclick="showUploadForm()">📤 Upload New</button>
+        </div>
+
+        <!-- Upload Form Card (Hidden by default) -->
+        <div class="card mb-3 hidden" id="upload-card">
+          <div class="card-header">
+            <h3>Upload Document</h3>
+            <button class="modal-close" onclick="hideUploadForm()">✕</button>
+          </div>
+          <div class="card-body">
+            <form id="upload-form">
+              <div class="form-group">
+                <label class="form-label">Title</label>
+                <input type="text" class="form-input" id="doc-title" placeholder="Document title" required minlength="3">
+              </div>
+              <div class="form-group">
+                <label class="form-label">Description</label>
+                <textarea class="form-textarea" id="doc-description" placeholder="Brief description (optional)"></textarea>
+              </div>
+              <div class="form-group">
+                <label class="form-label">File</label>
+                <div class="upload-zone" id="upload-zone">
+                  <div class="upload-icon">📁</div>
+                  <h4>Drag & drop your file here</h4>
+                  <p>or click to browse • PDF, DOC, DOCX • Max 10 MB</p>
+                </div>
+                <input type="file" id="doc-file" accept=".pdf,.doc,.docx" style="display:none">
+                <div id="file-preview-area"></div>
+              </div>
+              <div style="display:flex;gap:12px;justify-content:flex-end">
+                <button type="button" class="btn btn-outline" onclick="submitUpload('true')">💾 Save as Draft</button>
+                <button type="button" class="btn btn-primary" onclick="submitUpload('false')">📤 Submit for Approval</button>
+              </div>
+            </form>
+          </div>
+        </div>
+
+        <!-- Filters -->
+        <div class="filters-bar">
+          <div class="search-box">
+            <span class="search-icon">🔍</span>
+            <input type="text" id="search-input" placeholder="Search documents..." oninput="debouncedSearch()">
+          </div>
+          <select class="filter-select" id="status-filter" onchange="loadDocuments()">
+            <option value="">All Statuses</option>
+            <option value="Draft">Draft</option>
+            <option value="Submitted">Submitted</option>
+            <option value="UnderReview">Under Review</option>
+            <option value="ManagerApproved">Manager Approved</option>
+            <option value="Completed">Completed</option>
+            <option value="Rejected">Rejected</option>
+            <option value="RevisionRequested">Revision Requested</option>
+          </select>
+        </div>
+
+        <!-- Documents Table -->
+        <div class="table-container" id="documents-table-container">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Title</th>
+                <th>File</th>
+                <th>Status</th>
+                <th>Version</th>
+                <th>Date</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="documents-tbody"></tbody>
+          </table>
+        </div>
+        <div id="pagination-container"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Edit Modal -->
+  <div class="modal-overlay" id="edit-modal">
+    <div class="modal">
+      <div class="modal-header"><h3>Edit Document</h3><button class="modal-close" onclick="App.closeModal('edit-modal')">✕</button></div>
+      <div class="modal-body">
+        <form id="edit-form">
+          <input type="hidden" id="edit-doc-id">
+          <div class="form-group">
+            <label class="form-label">Title</label>
+            <input type="text" class="form-input" id="edit-title" required>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Description</label>
+            <textarea class="form-textarea" id="edit-description"></textarea>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Replace File (optional)</label>
+            <input type="file" class="form-input" id="edit-file" accept=".pdf,.doc,.docx">
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-outline" onclick="App.closeModal('edit-modal')">Cancel</button>
+        <button class="btn btn-primary" onclick="saveEdit()">Save Changes</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Preview Modal -->
+  <div class="modal-overlay" id="preview-modal">
+    <div class="modal modal-lg">
+      <div class="modal-header"><h3 id="preview-title">Document Preview</h3><button class="modal-close" onclick="App.closeModal('preview-modal')">✕</button></div>
+      <div class="modal-body" id="preview-body"></div>
+    </div>
+  </div>
+
+  <div class="spinner-overlay" id="loading-spinner"><div class="spinner"></div></div>
+
+  <script src="/socket.io/socket.io.js"></script>
+  <script src="/js/app.js"></script>
+  <script src="/js/socket.js"></script>
+  <script src="/js/sidebar.js"></script>
+  <script src="/js/notifications.js"></script>
+  <script src="/js/upload.js"></script>
+</body>
+</html>

@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="View analytics and insights for your document approval workflow.">
+  <title>Analytics — ApprovalFlow</title>
+  <link rel="stylesheet" href="/css/styles.css">
+</head>
+<body>
+  <div class="app-layout">
+    <aside class="sidebar" id="sidebar"></aside>
+    <div class="sidebar-overlay" onclick="App.closeSidebar()"></div>
+
+    <div class="main-content">
+      <header class="navbar">
+        <div class="navbar-left">
+          <button class="menu-toggle" onclick="App.toggleSidebar()">☰</button>
+          <h2 class="page-title">Analytics</h2>
+        </div>
+        <div class="navbar-right">
+          <button class="navbar-btn" id="theme-toggle" onclick="App.toggleTheme()">🌙</button>
+          <button class="navbar-btn" onclick="NotificationPanel.toggle()">🔔<span class="notification-badge hidden" id="notification-badge">0</span></button>
+        </div>
+      </header>
+
+      <div class="page-content">
+        <div class="page-header">
+          <h1>Analytics & Insights</h1>
+          <p>Track performance metrics across your document workflows</p>
+        </div>
+
+        <div class="stats-grid" id="analytics-stats"></div>
+
+        <div class="grid-2">
+          <div class="card">
+            <div class="card-header"><h3>Documents by Status</h3></div>
+            <div class="card-body"><div class="chart-container"><canvas id="status-chart"></canvas></div></div>
+          </div>
+          <div class="card">
+            <div class="card-header"><h3>Documents by Department</h3></div>
+            <div class="card-body"><div class="chart-container"><canvas id="dept-chart"></canvas></div></div>
+          </div>
+        </div>
+
+        <div class="card mt-3">
+          <div class="card-header"><h3>Monthly Trend</h3></div>
+          <div class="card-body"><div class="chart-container"><canvas id="trend-chart"></canvas></div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="spinner-overlay" id="loading-spinner"><div class="spinner"></div></div>
+
+  <script src="/socket.io/socket.io.js"></script>
+  <script src="/js/app.js"></script>
+  <script src="/js/socket.js"></script>
+  <script src="/js/sidebar.js"></script>
+  <script src="/js/notifications.js"></script>
+  <script src="/js/analytics.js"></script>
+</body>
+</html>

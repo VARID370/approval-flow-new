@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="ApprovalFlow — Modern document approval workflow system. Streamline your document reviews with multi-level approvals, real-time notifications, and analytics.">
+  <title>ApprovalFlow — Document Approval Workflow</title>
+  <link rel="stylesheet" href="/css/styles.css">
+</head>
+<body>
+  <div class="landing-page">
+    <!-- Navigation -->
+    <nav class="landing-nav" id="landing-nav">
+      <div class="landing-logo">
+        <div class="landing-logo-icon">AF</div>
+        <span class="landing-logo-text">ApprovalFlow</span>
+      </div>
+      <div class="landing-nav-links">
+        <button class="navbar-btn" id="theme-toggle" onclick="App.toggleTheme()" title="Toggle theme">🌙</button>
+        <a href="/login.html" class="btn btn-ghost">Sign In</a>
+        <a href="/register.html" class="btn btn-primary">Get Started</a>
+      </div>
+    </nav>
+
+    <!-- Hero -->
+    <section class="hero-section">
+      <div class="hero-content">
+        <div class="hero-badge">✨ Streamlined Document Workflows</div>
+        <h1 class="hero-title">
+          Document Approvals<br>
+          Made <span class="gradient-text">Effortless</span>
+        </h1>
+        <p class="hero-description">
+          ApprovalFlow transforms your document review process with multi-level approvals,
+          real-time notifications, and powerful analytics — all in one platform.
+        </p>
+        <div class="hero-buttons">
+          <a href="/register.html" class="btn btn-primary btn-lg">Start for Free →</a>
+          <a href="#features" class="btn btn-outline btn-lg">Learn More</a>
+        </div>
+      </div>
+    </section>
+
+    <!-- Features -->
+    <section class="features-section" id="features">
+      <div class="section-title">
+        <h2>Everything You Need</h2>
+        <p>Powerful features designed for modern document workflows</p>
+      </div>
+      <div class="features-grid">
+        <div class="feature-card">
+          <div class="feature-icon" style="background: var(--primary-50); color: var(--primary-600);">📄</div>
+          <h3>Document Management</h3>
+          <p>Upload PDF, DOC, and DOCX files with drag-and-drop. Preview, download, and manage versions with ease.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon" style="background: var(--success-50); color: var(--success-600);">✅</div>
+          <h3>Multi-Level Approvals</h3>
+          <p>Three-tier approval workflow — Employee → Manager → Director. Department-based access control ensures security.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon" style="background: var(--warning-50); color: var(--warning-600);">⚡</div>
+          <h3>Real-Time Notifications</h3>
+          <p>Instant notifications when documents are submitted, approved, rejected, or need revision. Never miss an update.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon" style="background: var(--info-50); color: var(--info-600);">📊</div>
+          <h3>Analytics Dashboard</h3>
+          <p>Track approval times, document volumes, department performance, and trends with beautiful interactive charts.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon" style="background: var(--danger-50); color: var(--danger-600);">🔒</div>
+          <h3>Role-Based Security</h3>
+          <p>Four distinct roles with granular permissions. Department isolation ensures documents stay within authorized teams.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon" style="background: #fdf4ff; color: #a21caf;">🌓</div>
+          <h3>Modern Interface</h3>
+          <p>Beautiful responsive design with dark and light themes. Works seamlessly on desktop, tablet, and mobile devices.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Workflow -->
+    <section class="workflow-section" id="workflow">
+      <div class="section-title">
+        <h2>How It Works</h2>
+        <p>A simple and efficient approval process</p>
+      </div>
+      <div class="workflow-steps">
+        <div class="workflow-step">
+          <div class="workflow-step-number">1</div>
+          <h4>Upload</h4>
+          <p>Employee uploads a document and submits for review</p>
+        </div>
+        <div class="workflow-step">
+          <div class="workflow-step-number">2</div>
+          <h4>Manager Review</h4>
+          <p>Department manager reviews and approves, rejects, or requests revision</p>
+        </div>
+        <div class="workflow-step">
+          <div class="workflow-step-number">3</div>
+          <h4>Director Review</h4>
+          <p>Department director performs final review and makes the ultimate decision</p>
+        </div>
+        <div class="workflow-step">
+          <div class="workflow-step-number">4</div>
+          <h4>Completed</h4>
+          <p>Document is approved and marked as completed with full audit trail</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="landing-footer">
+      <p>© 2024 ApprovalFlow. Built with ❤️ for efficient document workflows.</p>
+    </footer>
+  </div>
+
+  <script src="/js/app.js"></script>
+  <script>
+    App.redirectIfAuth();
+
+    window.addEventListener('scroll', () => {
+      const nav = document.getElementById('landing-nav');
+      if (nav) nav.classList.toggle('scrolled', window.scrollY > 50);
+    });
+  </script>
+</body>
+</html>
