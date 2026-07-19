@@ -1,0 +1,11 @@
+{
+  "name": "approvalflow-root",
+  "version": "1.0.0",
+  "description": "ApprovalFlow root package for deployment",
+  "main": "backend/server.js",
+  "scripts": {
+    "install-backend": "npm install --prefix backend",
+    "build": "npm run install-backend",
+    "start": "node backend/server.js"
+  }
+}
