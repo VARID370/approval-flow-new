@@ -293,17 +293,29 @@ const getPendingDocuments = async (req, res, next) => {
     const sort = buildSortObject(req.query.sort);
     const filter = {};
 
+    const pendingStatuses = [DOCUMENT_STATUS.SUBMITTED, DOCUMENT_STATUS.UNDER_REVIEW, DOCUMENT_STATUS.MANAGER_APPROVED];
+
     if (req.user.role === ROLES.MANAGER) {
-      filter.status = { $in: [DOCUMENT_STATUS.SUBMITTED, DOCUMENT_STATUS.UNDER_REVIEW] };
+      if (req.query.status) {
+        filter.status = [DOCUMENT_STATUS.SUBMITTED, DOCUMENT_STATUS.UNDER_REVIEW].includes(req.query.status) ? req.query.status : 'None';
+      } else {
+        filter.status = { $in: [DOCUMENT_STATUS.SUBMITTED, DOCUMENT_STATUS.UNDER_REVIEW] };
+      }
       filter.currentApprover = ROLES.MANAGER;
       filter.department = req.user.department;
     } else if (req.user.role === ROLES.DIRECTOR) {
-      filter.status = DOCUMENT_STATUS.MANAGER_APPROVED;
+      if (req.query.status) {
+        filter.status = req.query.status === DOCUMENT_STATUS.MANAGER_APPROVED ? req.query.status : 'None';
+      } else {
+        filter.status = DOCUMENT_STATUS.MANAGER_APPROVED;
+      }
       filter.currentApprover = ROLES.DIRECTOR;
       filter.department = req.user.department;
     } else if (req.user.role === ROLES.ADMIN) {
       if (req.query.status) {
-        filter.status = req.query.status;
+        filter.status = pendingStatuses.includes(req.query.status) ? req.query.status : 'None';
+      } else {
+        filter.status = { $in: pendingStatuses };
       }
     }
 
@@ -343,17 +355,38 @@ const getApprovalHistory = async (req, res, next) => {
     const sort = buildSortObject(req.query.sort || 'updatedAt:desc');
     const filter = {};
 
+    const finalStatuses = [DOCUMENT_STATUS.COMPLETED, DOCUMENT_STATUS.REJECTED, DOCUMENT_STATUS.REVISION_REQUESTED];
+
     if (req.user.role === ROLES.MANAGER) {
       filter.department = req.user.department;
       filter['approvalHistory.user'] = req.user._id;
+      if (req.query.status) {
+        filter.status = finalStatuses.includes(req.query.status) ? req.query.status : 'None';
+      } else {
+        filter.status = { $in: finalStatuses };
+      }
     } else if (req.user.role === ROLES.DIRECTOR) {
       filter.department = req.user.department;
-      filter.status = { $in: [DOCUMENT_STATUS.COMPLETED, DOCUMENT_STATUS.REJECTED, DOCUMENT_STATUS.MANAGER_APPROVED] };
-    } else if (req.user.role !== ROLES.ADMIN) {
+      if (req.query.status) {
+        filter.status = finalStatuses.includes(req.query.status) ? req.query.status : 'None';
+      } else {
+        filter.status = { $in: finalStatuses };
+      }
+    } else if (req.user.role === ROLES.ADMIN) {
+      if (req.query.status) {
+        filter.status = finalStatuses.includes(req.query.status) ? req.query.status : 'None';
+      } else {
+        filter.status = { $in: finalStatuses };
+      }
+    } else {
       filter.uploadedBy = req.user._id;
+      if (req.query.status) {
+        filter.status = finalStatuses.includes(req.query.status) ? req.query.status : 'None';
+      } else {
+        filter.status = { $in: finalStatuses };
+      }
     }
 
-    if (req.query.status) filter.status = req.query.status;
     if (req.query.search) {
       const searchRegex = new RegExp(req.query.search, 'i');
       const matchedUsers = await User.find({ name: searchRegex }).select('_id');

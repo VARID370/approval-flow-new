@@ -136,8 +136,8 @@ const renderDocuments = (docs) => {
       <td><strong class="truncate" style="max-width:200px;display:inline-block">${doc.title}</strong></td>
       <td>
         <span style="display:flex;align-items:center;gap:6px">
-          ${App.getFileIcon(doc.file.mimeType)}
-          <span style="font-size:12px;color:var(--text-tertiary)">${App.formatFileSize(doc.file.size)}</span>
+          ${App.getFileIcon(doc.file ? doc.file.mimeType : '')}
+          <span style="font-size:12px;color:var(--text-tertiary)">${App.formatFileSize(doc.file ? doc.file.size : 0)}</span>
         </span>
       </td>
       <td>${App.getStatusBadge(doc.status)}</td>
@@ -145,7 +145,7 @@ const renderDocuments = (docs) => {
       <td style="font-size:13px;color:var(--text-tertiary)">${App.formatDate(doc.createdAt)}</td>
       <td>
         <div style="display:flex;gap:6px">
-          ${doc.file.mimeType === 'application/pdf' ? `<button class="btn btn-sm btn-ghost" onclick="previewDoc('${doc._id}','${doc.title}','${doc.file.path}')" title="Preview">👁️</button>` : ''}
+          ${doc.file && doc.file.mimeType === 'application/pdf' ? `<button class="btn btn-sm btn-ghost" onclick="previewDoc('${doc._id}','${doc.title}','${doc.file.path}')" title="Preview">👁️</button>` : ''}
           <button class="btn btn-sm btn-ghost" onclick="downloadDoc('${doc._id}')" title="Download">⬇️</button>
           ${doc.status === 'Draft' || doc.status === 'RevisionRequested' ? `
             <button class="btn btn-sm btn-ghost" onclick="editDoc('${doc._id}')" title="Edit">✏️</button>

@@ -25,11 +25,15 @@ const documentSchema = new mongoose.Schema({
     default: ''
   },
   file: {
-    path: { type: String, required: [true, 'File path is required'] },
-    originalName: { type: String, required: true },
-    mimeType: { type: String, required: true },
-    size: { type: Number, required: true }
+    path: { type: String },
+    originalName: { type: String },
+    mimeType: { type: String },
+    size: { type: Number }
   },
+  fileUrl: { type: String },
+  fileName: { type: String },
+  fileType: { type: String },
+  fileSize: { type: Number },
   uploadedBy: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User',
@@ -74,8 +78,50 @@ const documentSchema = new mongoose.Schema({
   }
 }, {
   timestamps: true,
-  toJSON: { virtuals: true },
-  toObject: { virtuals: true }
+  toJSON: {
+    virtuals: true,
+    transform: function(doc, ret) {
+      if (!ret.file || !ret.file.path) {
+        let mimeType = 'application/octet-stream';
+        if (ret.fileType === 'pdf') {
+          mimeType = 'application/pdf';
+        } else if (ret.fileType === 'doc') {
+          mimeType = 'application/msword';
+        } else if (ret.fileType === 'docx') {
+          mimeType = 'application/vnd.openxmlformats-officedocument.wordprocessingml.document';
+        }
+        ret.file = {
+          path: ret.fileUrl || '',
+          originalName: ret.fileName || 'unknown',
+          mimeType: ret.file ? (ret.file.mimeType || mimeType) : mimeType,
+          size: ret.file ? (ret.file.size || ret.fileSize || 0) : (ret.fileSize || 0)
+        };
+      }
+      return ret;
+    }
+  },
+  toObject: {
+    virtuals: true,
+    transform: function(doc, ret) {
+      if (!ret.file || !ret.file.path) {
+        let mimeType = 'application/octet-stream';
+        if (ret.fileType === 'pdf') {
+          mimeType = 'application/pdf';
+        } else if (ret.fileType === 'doc') {
+          mimeType = 'application/msword';
+        } else if (ret.fileType === 'docx') {
+          mimeType = 'application/vnd.openxmlformats-officedocument.wordprocessingml.document';
+        }
+        ret.file = {
+          path: ret.fileUrl || '',
+          originalName: ret.fileName || 'unknown',
+          mimeType: ret.file ? (ret.file.mimeType || mimeType) : mimeType,
+          size: ret.file ? (ret.file.size || ret.fileSize || 0) : (ret.fileSize || 0)
+        };
+      }
+      return ret;
+    }
+  }
 });
 
 documentSchema.virtual('comments', {

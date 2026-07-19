@@ -28,14 +28,49 @@ document.addEventListener('DOMContentLoaded', async () => {
     return;
   }
 
+  updateStatusFilterOptions(currentTab);
   loadCurrentTab();
 });
+
+const updateStatusFilterOptions = (tab) => {
+  const statusFilter = document.getElementById('status-filter');
+  if (!statusFilter) return;
+
+  const prevValue = statusFilter.value;
+
+  if (tab === 'pending') {
+    statusFilter.innerHTML = `
+      <option value="">All Statuses</option>
+      <option value="Submitted">Submitted</option>
+      <option value="UnderReview">Under Review</option>
+      <option value="ManagerApproved">Manager Approved</option>
+    `;
+    if (['Submitted', 'UnderReview', 'ManagerApproved'].includes(prevValue)) {
+      statusFilter.value = prevValue;
+    } else {
+      statusFilter.value = '';
+    }
+  } else {
+    statusFilter.innerHTML = `
+      <option value="">All Statuses</option>
+      <option value="Completed">Completed</option>
+      <option value="Rejected">Rejected</option>
+      <option value="RevisionRequested">Revision Requested</option>
+    `;
+    if (['Completed', 'Rejected', 'RevisionRequested'].includes(prevValue)) {
+      statusFilter.value = prevValue;
+    } else {
+      statusFilter.value = '';
+    }
+  }
+};
 
 const switchTab = (tab) => {
   currentTab = tab;
   currentPage = 1;
   document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
   document.querySelector(`[data-tab="${tab}"]`).classList.add('active');
+  updateStatusFilterOptions(tab);
   loadCurrentTab();
 };
 
@@ -74,10 +109,8 @@ const loadPending = async (page = 1) => {
 
 const loadHistory = async (page = 1) => {
   currentPage = page;
-  const user = App.getUser();
-  const url = user.role === 'Admin' ? `/documents/all?${buildQuery(page)}` : `/documents/history?${buildQuery(page)}`;
   try {
-    const data = await App.get(url);
+    const data = await App.get(`/documents/history?${buildQuery(page)}`);
     if (data && data.data) {
       renderDocuments(data.data.documents, false);
       if (data.meta) App.renderPagination(data.meta, 'pagination-container', loadHistory);
@@ -115,7 +148,7 @@ const renderDocuments = (docs, showActions) => {
               <td>
                 <div>
                   <strong style="cursor:pointer;color:var(--primary-600)" onclick="viewDocument('${doc._id}')">${doc.title}</strong>
-                  <div style="font-size:12px;color:var(--text-tertiary)">${App.getFileIcon(doc.file.mimeType)} ${doc.file.originalName} • ${App.formatFileSize(doc.file.size)}</div>
+                  <div style="font-size:12px;color:var(--text-tertiary)">${App.getFileIcon(doc.file ? doc.file.mimeType : '')} ${doc.file ? doc.file.originalName : 'Unknown'} • ${App.formatFileSize(doc.file ? doc.file.size : 0)}</div>
                 </div>
               </td>
               <td>
